@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Realtime::VERSION
   s.authors     = ["Mike Atlas"]
   s.email       = ["mike.atlas@gmail.com"]
-  s.homepage    = "https://github.com/mikeatlas/realtime-rails"
+  s.homepage    = "http://mikeatlas.github.io/realtime-rails/"
   s.summary     = "Realtime support for Rails applications."
   s.description = "Provides a simple Realtime framework for Rails applications."
   s.license     = "MIT"

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Realtime-rails : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Realtime-rails</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mikeatlas/realtime-rails">View on GitHub</a>
+
+          <h1 id="project_title">Realtime-rails</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mikeatlas/realtime-rails/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mikeatlas/realtime-rails/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails"><span class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
+
+<p>This gem enables you to communicate with your rails front-end in realtime, leveraging socket.io, redis, and node.js.</p>
+
+<p>A live demo of this in action is at <a href="http://realtime-rails-demo.herokuapp.com/">Realtime-rails Demo on Heroku</a>.</p>
+
+<p>To start, install them gem in your Gemfile:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'realtime'</span>
+</pre></div>
+
+<p>and then run:</p>
+
+<div class="highlight highlight-console"><pre><span class="go">bundle install</span>
+</pre></div>
+
+<p>Next, you'll need to tell your <code>application_controller.rb</code> that it is sharing a realtime token with your realtime server by adding the following lines:</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="c1"># app/controllers/application_controller.rb</span>
+
+  <span class="n">realtime_controller</span> <span class="c1"># instruct all requests to enable realtime support</span>
+
+  <span class="k">def</span> <span class="nf">realtime_user_id</span>
+    <span class="k">return</span> <span class="mi">42</span> <span class="c1"># if using devise, change this to current_user.id</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">realtime_server_url</span>
+    <span class="c1"># point this to your node.js-socket.io-redis realtime server (you can set this later)</span>
+    <span class="k">return</span> <span class="s1">'http://your-realtime-server.yourdomain.com'</span>
+  <span class="k">end</span>
+</pre></div>
+
+<p>In your <code>application.html.erb</code> file, add the following to your <code>&lt;head&gt;</code> element:</p>
+
+<div class="highlight highlight-ruby"><pre> <span class="o">&lt;!--</span> <span class="ss">required</span><span class="p">:</span> <span class="n">realtime</span> <span class="n">support</span> <span class="n">framework</span> <span class="o">--&gt;</span>
+ <span class="o">&lt;</span><span class="sx">%= realtime_support %&gt;</span>
+<span class="sx"> &lt;!-- optional: message_handler dequeues realtime messages into Backbone.js style events --&gt;</span>
+<span class="sx"> &lt;%=</span> <span class="n">realtime_message_handler</span> <span class="sx">%&gt;</span>
+<span class="sx"> &lt;!-- optional: message_console_logger listens or dequeues realtime messages to the browser console --&gt;</span>
+ <span class="o">&lt;%=</span> <span class="n">realtime_message_console_logger</span> <span class="o">%&gt;</span>
+</pre></div>
+
+<p>While developing locally, you'll need redis installed:</p>
+
+<p>For OS X, with homebrew:</p>
+
+<div class="highlight highlight-console"><pre><span class="go">brew install redis</span>
+</pre></div>
+
+<p>For more information on installing redis locally on other platforms, see <a href="http://redis.io/topics/quickstart">http://redis.io/topics/quickstart</a></p>
+
+<p>Lastly, tell rails about your redis instance:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/redis.rb</span>
+<span class="n">location</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">"REDISCLOUD_URL"</span><span class="o">]</span> <span class="o">||</span> <span class="s1">'redis://127.0.0.1:6379/0'</span>
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+<span class="vg">$redis</span> <span class="o">=</span> <span class="no">Redis</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:host</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+</pre></div>
+
+<p>As you can see, in production we can connect to a hosted redis instance such as Redis Cloud.</p>
+
+<p>Now, you'll need to run a realtime node.js server (you can use my sample realtime server):</p>
+
+<div class="highlight highlight-console"><pre><span class="go">gem install foreman</span>
+<span class="go">git clone git://github.com/mikeatlas/realtime-server.git</span>
+<span class="go">cd realtime-server</span>
+<span class="go">sudo npm install</span>
+<span class="go">foreman start</span>
+</pre></div>
+
+<p>Now that you have rails running and connecting to redis, and node.js running and connecting to the same redis, you should be able to try it out. Connect to your rails console <code>rails c</code> and run the following command:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="vg">$redis</span><span class="o">.</span><span class="n">publish</span> <span class="s1">'realtime_msg'</span><span class="p">,</span> <span class="p">{</span><span class="ss">msg</span><span class="p">:</span> <span class="s1">'hello world - '</span> <span class="o">+</span> <span class="no">SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span> <span class="ss">recipient_user_ids</span><span class="p">:</span> <span class="o">[</span><span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="o">]</span><span class="p">}</span><span class="o">.</span><span class="n">to_json</span>
+</pre></div>
+
+<p>If you are user id <code>42</code> in the rails application, you should see in your browser console something like:</p>
+
+<pre><code>Object {msg: "hello world - e008f94a8710826bad8c4f6af28be922"}
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Realtime-rails maintained by <a href="https://github.com/mikeatlas">mikeatlas</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

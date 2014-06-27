@@ -1,0 +1,34 @@
+<script type='text/javascript'>
+
+	window.realtime = {};
+	window.realtime.messageQueue = [];
+	window.realtime.enabled = false;
+
+</script>
+
+<script src="<%= realtime_server_url %>/socket.io/socket.io.js"></script>
+
+<script type='text/javascript'>
+
+	if (typeof io != 'undefined' && io != null) {
+		window.realtime.token = '<%= realtime_token %>';
+		window.realtime.userId = '<%= realtime_user_id %>';
+		window.realtime.socketIo = io.connect('<%= realtime_server_url %>/?_rtUserId=<%= @realtime_user_id %>&_rtToken=<%= @realtime_token %>');
+	}
+
+	if (window.realtime.socketIo) {
+	
+		window.realtime.enabled = true;
+
+		window.realtime.socketIo.on('connect', function() {
+			// Give a nice round-trip ACK to our realtime server that we connected.
+    		window.realtime.socketIo.emit('realtime_user_id_connected', { userId: window.realtime.userId });
+  		});
+
+		// Queue up all incoming realtime messages.
+  		window.realtime.socketIo.on('realtime_msg', function(message) {
+    		window.realtime.messageQueue.push(message);
+		});
+	}
+
+</script>

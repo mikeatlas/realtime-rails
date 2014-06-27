@@ -5,7 +5,6 @@ module Realtime
 		module ClassMethods
 			def realtime_controller
 			 	before_filter :do_realtime_token
-			 	before_filter :do_realtime_domain
 			 	before_filter :do_realtime_user_id
 			 	before_filter :do_realtime_server_url
 			 	after_filter  :store_realtime_session
@@ -15,11 +14,6 @@ module Realtime
 		def do_realtime_token
 			@realtime_token = Digest::MD5.hexdigest("#{session[:session_id]}:#{realtime_user_id}")
 			return @realtime_token
-		end
-
-		def do_realtime_domain
-			@realtime_domain = realtime_domain
-			return @realtime_domain
 		end
 
 		def do_realtime_user_id

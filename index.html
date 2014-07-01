@@ -95,7 +95,7 @@
 
 <p>As you can see, in production we can connect to a hosted redis instance, such as Redis Cloud.</p>
 
-<p>Now, you'll need to run a realtime node.js server (you can use my <a href="https://github.com/mikeatlas/realtime-server">sample realtime server</a>):</p>
+<p>Now, you'll need to run a realtime node.js server (you can use my <a href="https://github.com/mikeatlas/realtime-server">sample realtime server</a>). If you host this Node.js server on Heroku, you'll need to <a href="https://devcenter.heroku.com/articles/heroku-labs-websockets">enable websockets for this application.</a>.</p>
 
 <div class="highlight highlight-console"><pre><span class="go">gem install foreman</span>
 <span class="go">git clone git://github.com/mikeatlas/realtime-server.git</span>

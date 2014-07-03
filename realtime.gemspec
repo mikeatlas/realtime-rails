@@ -18,6 +18,9 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.1.1"
-  s.add_dependency "redis"
+  
+  #s.add_dependency "redis"
+  #s.add_dependency "zmq"
+  #s.add_dependency "em-zmq"
 
 end

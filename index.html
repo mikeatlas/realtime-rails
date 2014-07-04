@@ -118,7 +118,7 @@
 <p>If using ZeroMQ, tell rails about the ZeroMQ endpoint:</p>
 
 <div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/zero_mq.rb</span>
-<span class="vg">$zero_mq</span> <span class="o">=</span> <span class="s2">"tcp://localhost:5556"</span>
+<span class="vg">$zero_mq</span> <span class="o">=</span> <span class="s2">"tcp://zmq-server.mikeatlas.com:5556"</span>
 </pre></div>
 
 <p>Now, you'll need to run a realtime node.js server (you can use my <a href="https://github.com/mikeatlas/realtime-server">sample realtime server</a>). If you host this Node.js server on Heroku, you'll need to <a href="https://devcenter.heroku.com/articles/heroku-labs-websockets">enable websockets for this application</a>.</p>

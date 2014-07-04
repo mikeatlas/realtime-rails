@@ -34,15 +34,15 @@
         <h1>
 <a name="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails"><span class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
 
-<p>This gem enables you to communicate with your rails front-end in realtime, leveraging socket.io, redis (or ZeroMQ), and node.js.</p>
+<p>This gem enables you to communicate with your rails front-end in realtime, leveraging socket.io, redis (or ZeroMQ), and node.js. Clients are authenticated via day-long session token.</p>
 
 <p>This gem, and sample node.js servers were inspired by the blog post: <a href="http://liamkaufman.com/blog/2013/02/27/adding-real-time-to-a-restful-rails-app/">Liam Kaufman's <em>Adding Real-Time to a RESTful Rails App</em></a>.</p>
 
-<p>A live demo of this in action using redis is at <a href="http://realtime-rails-demo.herokuapp.com/">Realtime-rails Demo on Heroku</a>.</p>
+<p>A live demo of this in action using redis is at <a href="http://realtime-rails-demo.herokuapp.com/">Realtime-rails Demo on Heroku</a>. A diagram of this in action:</p>
 
 <p><img src="http://i.imgur.com/vm8o2IF.png" width="450"></p>
 
-<p>A live demo of this in action using ZeroMQ is at <a href="http://zmq-server.mikeatlas.com:5000/">Realtime-rails-zmq Demo</a>.</p>
+<p>A live demo of this in action using ZeroMQ is at <a href="http://zmq-server.mikeatlas.com:5000/">Realtime-rails-zmq Demo</a>. A diagram of this in action:</p>
 
 <p><img src="http://i.imgur.com/7FkehSN.png" width="450"></p>
 
@@ -51,7 +51,7 @@
 <div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'realtime'</span>
 </pre></div>
 
-<p>If you want to use Redis for your realtime backend, first, install redis:</p>
+<p>If you want to use redis for your realtime backend, first, install redis:</p>
 
 <p>For OS X, with homebrew:</p>
 
@@ -107,7 +107,7 @@
  <span class="o">&lt;%=</span> <span class="n">realtime_message_console_logger</span> <span class="o">%&gt;</span>
 </pre></div>
 
-<p>Lastly, if using redis, tell rails about your redis instance:</p>
+<p>If using redis, tell rails about your redis instance:</p>
 
 <div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/redis.rb</span>
 <span class="n">location</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">"REDISCLOUD_URL"</span><span class="o">]</span> <span class="o">||</span> <span class="s1">'redis://127.0.0.1:6379/0'</span>
@@ -115,7 +115,7 @@
 <span class="vg">$redis</span> <span class="o">=</span> <span class="no">Redis</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:host</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
 </pre></div>
 
-<p>If using ZeroMQ:</p>
+<p>If using ZeroMQ, tell rails about the ZeroMQ endpoint:</p>
 
 <div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/zero_mq.rb</span>
 <span class="vg">$zero_mq</span> <span class="o">=</span> <span class="s2">"tcp://localhost:5556"</span>
@@ -130,7 +130,7 @@
 <span class="go">foreman start</span>
 </pre></div>
 
-<p>If you want to use the <a href="https://github.com/mikeatlas/realtime-server-zmq">ZeroMQ enabled realtime server</a>, you'll probably run into trouble standing it up on Heroku since the library is not installed on the Cedar stack by default, so my recommendation is to run it on an Amazon EC2 instance (be sure to open up ports 80, 5001, 5556 and 5557). You'll need to install ZeroMQ, and run:</p>
+<p>If you want to use the <a href="https://github.com/mikeatlas/realtime-server-zmq">ZeroMQ enabled realtime server</a>, you'll probably run into trouble standing it up on Heroku since the library is not installed on the Cedar stack by default, so my recommendation is to run it on an Amazon EC2 instance (be sure to open up ports 80, 5001, 5556 and 5557). You'll need to <a href="http://zeromq.org/area:download">install ZeroMQ</a>, and run:</p>
 
 <div class="highlight highlight-console"><pre><span class="go">gem install foreman</span>
 <span class="go">git clone git://github.com/mikeatlas/realtime-server-zmq.git</span>

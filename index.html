@@ -85,8 +85,8 @@
 
 <div class="highlight highlight-ruby"><pre>  <span class="c1"># app/controllers/application_controller.rb</span>
 
-  <span class="n">realtime_controller</span><span class="p">({</span><span class="ss">:queue</span> <span class="ss">:redis</span><span class="p">})</span> <span class="c1"># instruct all requests to enable realtime support via redis</span>
-  <span class="c1"># realtime_controller({:queue :zmq}) # instruct all requests to enable realtime support via zmq</span>
+  <span class="n">realtime_controller</span><span class="p">({</span><span class="ss">:queue</span> <span class="o">=&gt;</span> <span class="ss">:redis</span><span class="p">})</span> <span class="c1"># instruct all requests to enable realtime support via redis</span>
+  <span class="c1"># realtime_controller({:queue =&gt; :zmq}) # instruct all requests to enable realtime support via zmq</span>
 
   <span class="k">def</span> <span class="nf">realtime_user_id</span>
     <span class="k">return</span> <span class="mi">42</span> <span class="c1"># if using devise, change this to current_user.id</span>

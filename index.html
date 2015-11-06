@@ -32,9 +32,11 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a name="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails"><span class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
+<a id="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails" aria-hidden="true"><span class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
 
 <p>This gem enables you to communicate with your rails front-end in realtime, leveraging socket.io, redis (or ZeroMQ), and node.js. Clients are authenticated via their user id plus a day-long shared session token between the servers.</p>
+
+<p>Note: This gem is a concept piece originally conceived ~2013 and published early ~2014. As of mid-2015, support for performant, native and scalable websockets are available in Rails. See <a href="https://github.com/rails/actioncable">ActiveCable</a> - you probably don't necessarily need a pub/sub server and Node.js running anymore to achieve similar lightweight realtime bi-directional communication with a large number of connected clients to your Rails application.</p>
 
 <p>This gem, and sample node.js servers were inspired by the blog post: <a href="http://liamkaufman.com/blog/2013/02/27/adding-real-time-to-a-restful-rails-app/">Liam Kaufman's <em>Adding Real-Time to a RESTful Rails App</em></a>.</p>
 
@@ -48,105 +50,92 @@
 
 <p>To start, install the gem in your Gemfile:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'realtime'</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">'</span>realtime<span class="pl-pds">'</span></span></pre></div>
 
 <p>If you want to use redis for your realtime backend, first, install redis:</p>
 
 <p>For OS X, with homebrew:</p>
 
-<div class="highlight highlight-console"><pre><span class="go">brew install redis</span>
-</pre></div>
+<div class="highlight highlight-text-shell-session"><pre><span class="pl-mo">brew install redis</span></pre></div>
 
 <p>For more information on installing redis locally on other platforms, see <a href="http://redis.io/topics/quickstart">http://redis.io/topics/quickstart</a></p>
 
 <p>next, include in your <code>Gemfile</code>:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'redis'</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">'</span>redis<span class="pl-pds">'</span></span></pre></div>
 
 <p>and then run:</p>
 
-<div class="highlight highlight-console"><pre><span class="go">bundle install</span>
-</pre></div>
+<div class="highlight highlight-text-shell-session"><pre><span class="pl-mo">bundle install</span></pre></div>
 
 <p>If you want to use embedded ZeroMQ for your realtime backend, you'll need to <a href="http://zeromq.org/intro:get-the-software">install ZeroMQ</a>, and then include:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'zmq'</span>
-<span class="n">gem</span> <span class="s1">'em-zmq'</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">'</span>zmq<span class="pl-pds">'</span></span>
+<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">'</span>em-zmq<span class="pl-pds">'</span></span></pre></div>
 
 <p>and then run:</p>
 
-<div class="highlight highlight-console"><pre><span class="go">bundle install</span>
-</pre></div>
+<div class="highlight highlight-text-shell-session"><pre><span class="pl-mo">bundle install</span></pre></div>
 
 <p>Next, you'll need to tell your <code>application_controller.rb</code> that it is sharing a realtime token with your realtime server by adding the following lines:</p>
 
-<div class="highlight highlight-ruby"><pre>  <span class="c1"># app/controllers/application_controller.rb</span>
+<div class="highlight highlight-source-ruby"><pre>  <span class="pl-c"># app/controllers/application_controller.rb</span>
 
-  <span class="n">realtime_controller</span><span class="p">({</span><span class="ss">:queue</span> <span class="o">=&gt;</span> <span class="ss">:redis</span><span class="p">})</span> <span class="c1"># instruct all requests to enable realtime support via redis</span>
-  <span class="c1"># realtime_controller({:queue =&gt; :zmq}) # instruct all requests to enable realtime support via zmq</span>
+  realtime_controller({<span class="pl-c1">:queue</span> =&gt; <span class="pl-c1">:redis</span>}) <span class="pl-c"># instruct all requests to enable realtime support via redis</span>
+  <span class="pl-c"># realtime_controller({:queue =&gt; :zmq}) # instruct all requests to enable realtime support via zmq</span>
 
-  <span class="k">def</span> <span class="nf">realtime_user_id</span>
-    <span class="k">return</span> <span class="mi">42</span> <span class="c1"># if using devise, change this to current_user.id</span>
-  <span class="k">end</span>
+  <span class="pl-k">def</span> <span class="pl-en">realtime_user_id</span>
+    <span class="pl-k">return</span> <span class="pl-c1">42</span> <span class="pl-c"># if using devise, change this to current_user.id</span>
+  <span class="pl-k">end</span>
 
-  <span class="k">def</span> <span class="nf">realtime_server_url</span>
-    <span class="c1"># point this to your node.js-socket.io-redis/zmq realtime server (you can set this later)</span>
-    <span class="k">return</span> <span class="s1">'http://your-realtime-server.yourdomain.com'</span>
-  <span class="k">end</span>
-</pre></div>
+  <span class="pl-k">def</span> <span class="pl-en">realtime_server_url</span>
+    <span class="pl-c"># point this to your node.js-socket.io-redis/zmq realtime server (you can set this later)</span>
+    <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>http://your-realtime-server.yourdomain.com<span class="pl-pds">'</span></span>
+  <span class="pl-k">end</span></pre></div>
 
 <p>In your <code>application.html.erb</code> file, add the following to your <code>&lt;head&gt;</code> element:</p>
 
-<div class="highlight highlight-ruby"><pre> <span class="o">&lt;!--</span> <span class="ss">required</span><span class="p">:</span> <span class="n">realtime</span> <span class="n">support</span> <span class="n">framework</span> <span class="o">--&gt;</span>
- <span class="o">&lt;</span><span class="sx">%= realtime_support %&gt;</span>
-<span class="sx"> &lt;!-- optional: message_handler dequeues realtime messages into Backbone.js style events --&gt;</span>
-<span class="sx"> &lt;%=</span> <span class="n">realtime_message_handler</span> <span class="sx">%&gt;</span>
-<span class="sx"> &lt;!-- optional: message_console_logger listens or dequeues realtime messages to the browser console --&gt;</span>
- <span class="o">&lt;%=</span> <span class="n">realtime_message_console_logger</span> <span class="o">%&gt;</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre> <span class="pl-k">&lt;</span>!<span class="pl-k">--</span> <span class="pl-c1">required:</span> realtime support framework <span class="pl-k">--</span><span class="pl-k">&gt;</span>
+ <span class="pl-k">&lt;</span><span class="pl-k">%=</span> realtime_support <span class="pl-s"><span class="pl-pds">%&gt;</span></span>
+<span class="pl-s"> &lt;!-- optional: message_handler dequeues realtime messages into Backbone.js style events --<span class="pl-pds">&gt;</span></span>
+ <span class="pl-k">&lt;</span><span class="pl-k">%=</span> realtime_message_handler <span class="pl-s"><span class="pl-pds">%&gt;</span></span>
+<span class="pl-s"> &lt;!-- optional: message_console_logger listens or dequeues realtime messages to the browser console --<span class="pl-pds">&gt;</span></span>
+ <span class="pl-k">&lt;</span><span class="pl-k">%=</span> realtime_message_console_logger <span class="pl-s"><span class="pl-pds">%&gt;</span></span></pre></div>
 
 <p>If using redis, tell rails about your redis instance:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/redis.rb</span>
-<span class="n">location</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">"REDISCLOUD_URL"</span><span class="o">]</span> <span class="o">||</span> <span class="s1">'redis://127.0.0.1:6379/0'</span>
-<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
-<span class="vg">$redis</span> <span class="o">=</span> <span class="no">Redis</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:host</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/initializers/redis.rb</span>
+location <span class="pl-k">=</span> <span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>REDISCLOUD_URL<span class="pl-pds">"</span></span>] <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>redis://127.0.0.1:6379/0<span class="pl-pds">'</span></span>
+uri <span class="pl-k">=</span> <span class="pl-c1">URI</span>.parse(location)
+<span class="pl-smi">$redis</span> <span class="pl-k">=</span> <span class="pl-c1">Redis</span>.<span class="pl-k">new</span>(<span class="pl-c1">:host</span> =&gt; uri.host, <span class="pl-c1">:port</span> =&gt; uri.port, <span class="pl-c1">:password</span> =&gt; uri.password)</pre></div>
 
 <p>If using ZeroMQ, tell rails about the ZeroMQ endpoint:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="c1"># config/initializers/zero_mq.rb</span>
-<span class="vg">$zero_mq</span> <span class="o">=</span> <span class="s2">"tcp://zmq-server.mikeatlas.com:5556"</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/initializers/zero_mq.rb</span>
+<span class="pl-smi">$zero_mq</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>tcp://zmq-server.mikeatlas.com:5556<span class="pl-pds">"</span></span></pre></div>
 
 <p>Now, you'll need to run a realtime node.js server (you can use my <a href="https://github.com/mikeatlas/realtime-server">sample realtime server</a>). If you host this Node.js server on Heroku, you'll need to <a href="https://devcenter.heroku.com/articles/heroku-labs-websockets">enable websockets for this application</a>.</p>
 
-<div class="highlight highlight-console"><pre><span class="go">gem install foreman</span>
-<span class="go">git clone git://github.com/mikeatlas/realtime-server.git</span>
-<span class="go">cd realtime-server</span>
-<span class="go">sudo npm install</span>
-<span class="go">foreman start</span>
-</pre></div>
+<div class="highlight highlight-text-shell-session"><pre><span class="pl-mo">gem install foreman</span>
+<span class="pl-mo">git clone git://github.com/mikeatlas/realtime-server.git</span>
+<span class="pl-mo">cd realtime-server</span>
+<span class="pl-mo">sudo npm install</span>
+<span class="pl-mo">foreman start</span></pre></div>
 
 <p>If you want to use the <a href="https://github.com/mikeatlas/realtime-server-zmq">ZeroMQ enabled realtime server</a>, you'll probably run into trouble standing it up on Heroku since the library is not installed on the Cedar stack by default, so my recommendation is to run it on an Amazon EC2 instance (be sure to open up ports 80, 5001, 5556 and 5557). You'll need to <a href="http://zeromq.org/area:download">install ZeroMQ</a>, and run:</p>
 
-<div class="highlight highlight-console"><pre><span class="go">gem install foreman</span>
-<span class="go">git clone git://github.com/mikeatlas/realtime-server-zmq.git</span>
-<span class="go">cd realtime-server-zmq</span>
-<span class="go">sudo npm install</span>
-<span class="go">foreman start</span>
-</pre></div>
+<div class="highlight highlight-text-shell-session"><pre><span class="pl-mo">gem install foreman</span>
+<span class="pl-mo">git clone git://github.com/mikeatlas/realtime-server-zmq.git</span>
+<span class="pl-mo">cd realtime-server-zmq</span>
+<span class="pl-mo">sudo npm install</span>
+<span class="pl-mo">foreman start</span></pre></div>
 
 <p>Now that you have rails running and connecting to redis/ZeroMQ, and node.js running and connecting, you should be able to try it out. Connect to your rails console <code>rails c</code> and run the following command:</p>
 
-<div class="highlight highlight-ruby"><pre><span class="c1"># if using redis:</span>
-<span class="vg">$redis</span><span class="o">.</span><span class="n">publish</span> <span class="s1">'realtime_msg'</span><span class="p">,</span> <span class="p">{</span><span class="ss">msg</span><span class="p">:</span> <span class="s1">'hello world - '</span> <span class="o">+</span> <span class="no">SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span> <span class="ss">recipient_user_ids</span><span class="p">:</span> <span class="o">[</span><span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="o">]</span><span class="p">}</span><span class="o">.</span><span class="n">to_json</span>
-<span class="c1"># if using ZeroMQ:</span>
-<span class="no">ZmqWrapper</span><span class="o">.</span><span class="n">publish</span><span class="p">({</span><span class="ss">msg</span><span class="p">:</span> <span class="s1">'hello world - '</span> <span class="o">+</span> <span class="no">SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span> <span class="ss">recipient_user_ids</span><span class="p">:</span> <span class="o">[</span><span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="o">]</span><span class="p">})</span>
-</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># if using redis:</span>
+<span class="pl-smi">$redis</span>.publish <span class="pl-s"><span class="pl-pds">'</span>realtime_msg<span class="pl-pds">'</span></span>, {<span class="pl-c1">msg:</span> <span class="pl-s"><span class="pl-pds">'</span>hello world - <span class="pl-pds">'</span></span> <span class="pl-k">+</span> <span class="pl-c1">SecureRandom</span>.hex, <span class="pl-c1">recipient_user_ids:</span> [<span class="pl-c1">41</span>, <span class="pl-c1">42</span>]}.to_json
+<span class="pl-c"># if using ZeroMQ:</span>
+<span class="pl-c1">ZmqWrapper</span>.publish({<span class="pl-c1">msg:</span> <span class="pl-s"><span class="pl-pds">'</span>hello world - <span class="pl-pds">'</span></span> <span class="pl-k">+</span> <span class="pl-c1">SecureRandom</span>.hex, <span class="pl-c1">recipient_user_ids:</span> [<span class="pl-c1">41</span>, <span class="pl-c1">42</span>]})</pre></div>
 
 <p>If you are user id <code>42</code> in the rails application, you should see in your browser console something like:</p>
 
@@ -159,7 +148,7 @@
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p class="copyright">Realtime-rails maintained by <a href="https://github.com/mikeatlas">mikeatlas</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 

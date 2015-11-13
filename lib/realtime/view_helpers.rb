@@ -2,7 +2,8 @@ module Realtime
   module ViewHelpers
 
     def realtime_support(args = {})
-      return render(template: "realtime/realtime_support",
+      async = args[:async] ? 'async_' : ''
+      return render(template: "realtime/#{async}realtime_support",
                     layout: nil,
                     locals:
                     { realtime_token: @realtime_token,

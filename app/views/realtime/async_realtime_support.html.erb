@@ -1,0 +1,71 @@
+<script type='text/javascript'>
+
+	window.realtime = {};
+	window.realtime.messageQueue = [];
+	window.realtime.enabled = false;
+
+  (function () {
+    // Load external scripts asynchronously
+    var loadScript = function (src, callback) {
+      var s, r, t;
+      r = false;
+      s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.src = src;
+      s.onload = s.onreadystatechange = function () {
+        if (!r && (!this.readyState || this.readyState == 'complete'))
+        {
+          r = true;
+          callback();
+        }
+      };
+      t = document.getElementsByTagName('script')[0];
+      t.parentNode.insertBefore(s, t);
+    };
+
+    // Trigger a custom event that the user JS can listen for
+    // when everything finishes loading
+    var triggerEvent = function (name) {
+      var event;
+
+      if (document.createEvent) {
+        event = document.createEvent('HTMLEvents');
+        event.initEvent(name, true, true);
+        event.eventName = name;
+        document.dispatchEvent(event);
+      } else {
+        // For IE compatibility
+        event = document.createEventObject();
+        event.eventType = name;
+        event.eventName = name;
+        document.fireEvent('on' + event.eventType, event);
+      }
+    };
+
+    loadScript('<%= realtime_server_url %>/socket.io/socket.io.js', function () {
+      if (typeof io != 'undefined' && io != null) {
+        window.realtime.token = '<%= realtime_token %>';
+        window.realtime.userId = '<%= realtime_user_id %>';
+        window.realtime.socketIo = io.connect('<%= realtime_server_url %>/?_rtUserId=<%= @realtime_user_id %>&_rtToken=<%= @realtime_token %>');
+      }
+
+      <%= render "realtime/realtime_loader" %>
+
+      <% if message_handler %>
+        loadScript('//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js', function () {
+          loadScript('//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js', function () {
+            <%= render "realtime/realtime_message_handler" %>
+
+            triggerEvent('realtime:loaded')
+          })
+        })
+      <% else %>
+        <% if message_console_logger %>
+          <%= render "realtime/realtime_message_console_logger" %>
+        <% end %>
+
+        triggerEvent('realtime:loaded')
+      <% end %>
+    })
+  })();
+</script>

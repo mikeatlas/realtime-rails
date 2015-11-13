@@ -1,21 +1,13 @@
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+if (window.realtime.enabled){
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+  window.realtime.eventBus = _.extend({}, Backbone.Events);
 
-<script type='text/javascript'>
+  messageQueueRunner = function() {
+    message = window.realtime.messageQueue.shift();
+    if (message) {
+      window.realtime.eventBus.trigger('realtimeMessage', message);
+    }
+  };
 
-  if (window.realtime.enabled){
-
-    window.realtime.eventBus = _.extend({}, Backbone.Events);
-
-    messageQueueRunner = function() {
-      message = window.realtime.messageQueue.shift();
-      if (message) {
-        window.realtime.eventBus.trigger('realtimeMessage', message);
-      }
-    };
-
-    setInterval(messageQueueRunner, 100);
-  }
-
-</script>
+  setInterval(messageQueueRunner, 100);
+}

@@ -33,10 +33,10 @@
 
 </script>
 
-<%= if message_handler %>
+<% if message_handler %>
   <%= render "realtime/realtime_message_handler" %>
 <% end %>
 
-<%= if message_console_logger %>
+<% if message_console_logger %>
   <%= render "realtime/realtime_message_console_logger" %>
 <% end %>

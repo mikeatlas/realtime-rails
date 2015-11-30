@@ -13,5 +13,21 @@ module Realtime
                       message_handler: args[:message_handler],
                       message_console_logger: args[:message_console_logger] }).to_s
     end
+
+    def realtime_message_handler
+      ActiveSupport::Deprecation.warn("'realtime_message_handler' is deprecated, "\
+                                      "please refer to the documentation for details.")
+      return render(template: "realtime/realtime_message_handler",
+                    layout: nil,
+                    locals: {}).to_s
+    end
+
+    def realtime_message_console_logger
+      ActiveSupport::Deprecation.warn("'realtime_message_console_logger' is deprecated, "\
+                                      "please refer to the documentation for details.")
+      return render(template: "realtime/realtime_message_console_logger",
+                    layout: nil,
+                    locals: {}).to_s
+    end
   end
 end

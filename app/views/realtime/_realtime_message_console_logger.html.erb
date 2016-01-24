@@ -1,0 +1,20 @@
+if (window.realtime.enabled && window.realtime.eventBus){
+  // handle events in the queue with eventing
+  var realtimeMessageEventConsoleLogger = function(message) {
+    console.log(message);
+  };
+  window.realtime.eventBus.on('realtimeMessage', realtimeMessageEventConsoleLogger);
+
+} else if (window.realtime.enabled) {
+  // handle events in the queue without eventing
+  messageQueueConsoleLogger = function() {
+    message = window.realtime.messageQueue.shift();
+    if (message) {
+      console.log(message);
+    }
+  };
+  setInterval(messageQueueConsoleLogger, 100);
+
+} else {
+  console.log('Error: Realtime was not enabled.')
+}

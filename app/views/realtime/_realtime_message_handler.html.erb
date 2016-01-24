@@ -1,0 +1,13 @@
+if (window.realtime.enabled){
+
+  window.realtime.eventBus = _.extend({}, Backbone.Events);
+
+  messageQueueRunner = function() {
+    message = window.realtime.messageQueue.shift();
+    if (message) {
+      window.realtime.eventBus.trigger('realtimeMessage', message);
+    }
+  };
+
+  setInterval(messageQueueRunner, 100);
+}

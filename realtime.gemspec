@@ -7,7 +7,7 @@ require "realtime/version"
 Gem::Specification.new do |s|
   s.name        = "realtime"
   s.version     = Realtime::VERSION
-  s.authors     = ["Mike Atlas", "Ahmad Abdel-Yaman (@ayaman)"]
+  s.authors     = ["Mike Atlas", "Ahmad Abdel-Yaman (@ayaman)", "Nick Prokesch (@prokizzle)"]
   s.email       = ["mike.atlas@gmail.com"]
   s.homepage    = "http://mikeatlas.github.io/realtime-rails/"
   s.summary     = "Realtime support for Rails applications."

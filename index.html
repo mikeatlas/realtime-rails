@@ -32,11 +32,11 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails" aria-hidden="true"><span class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
+<a id="realtime-support-for-rails" class="anchor" href="#realtime-support-for-rails" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Realtime Support for Rails</h1>
 
 <p>This gem enables you to communicate with your rails front-end in realtime, leveraging socket.io, redis (or ZeroMQ), and node.js. Clients are authenticated via their user id plus a day-long shared session token between the servers.</p>
 
-<p>Note: This gem is a concept piece originally conceived ~2013 and published early ~2014. As of mid-2015, support for performant, native and scalable websockets are available in Rails. See <a href="https://github.com/rails/actioncable">ActiveCable</a> - you probably don't necessarily need a pub/sub server and Node.js running anymore to achieve similar lightweight realtime bi-directional communication with a large number of connected clients to your Rails application.</p>
+<p>Note: This gem is a concept piece originally conceived in 2013 and published as a generic open source project in early 2014. As of mid-2015, support for performant, native and scalable websockets are available in Rails. See <del><a href="https://github.com/rails/actioncable">ActiveCable</a></del> <a href="https://github.com/rails/rails/tree/master/actioncable">ActionCable</a>, which landed in Rails 5 and will probably be officially released early/mid 2016. As such, with <a href="http://weblog.rubyonrails.org/2016/2/2/Rails-5-0-beta2/"><code>ActionCable</code>'s design</a>, you don't even need a separate pub/sub server (redis) and Node.js running anymore to achieve similar lightweight realtime bi-directional communication with a large number of connected clients to your Rails application. Progress marches forward! I presume, if you are stuck and can't upgrade to Rails 5 anytime soon, perhaps this project is lightweight compared to some of the heavier alternatives like Faye or PubNub.</p>
 
 <p>This gem, and sample node.js servers were inspired by the blog post: <a href="http://liamkaufman.com/blog/2013/02/27/adding-real-time-to-a-restful-rails-app/">Liam Kaufman's <em>Adding Real-Time to a RESTful Rails App</em></a>.</p>
 

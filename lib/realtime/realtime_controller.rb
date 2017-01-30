@@ -4,15 +4,14 @@ module Realtime
 
 		module ClassMethods
 			def realtime_controller(options = nil)
-			 	before_action :do_realtime_token
-			 	before_action :do_realtime_user_id
-			 	before_action :do_realtime_server_url
-			 	if options.nil?
-			 		after_action :store_realtime_session_redis
-			 	elsif options[:queue] == :redis
-			 		after_action :store_realtime_session_redis
-			 	elsif options[:queue] == :zmq
-			 		after_action :store_realtime_session_zmq
+                                queue = options.delete(:queue)
+			 	before_action :do_realtime_token, options
+			 	before_action :do_realtime_user_id, options
+			 	before_action :do_realtime_server_url, options
+			 	if queue.nil? || queue == :redis
+			 		after_action :store_realtime_session_redis, options
+			 	elsif queue == :zmq
+			 		after_action :store_realtime_session_zmq, options
 			 	end
 			end
 		end

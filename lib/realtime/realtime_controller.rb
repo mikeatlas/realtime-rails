@@ -4,15 +4,15 @@ module Realtime
 
 		module ClassMethods
 			def realtime_controller(options = nil)
-			 	before_filter :do_realtime_token
-			 	before_filter :do_realtime_user_id
-			 	before_filter :do_realtime_server_url
+			 	before_action :do_realtime_token
+			 	before_action :do_realtime_user_id
+			 	before_action :do_realtime_server_url
 			 	if options.nil?
-			 		after_filter :store_realtime_session_redis
+			 		after_action :store_realtime_session_redis
 			 	elsif options[:queue] == :redis
-			 		after_filter :store_realtime_session_redis
+			 		after_action :store_realtime_session_redis
 			 	elsif options[:queue] == :zmq
-			 		after_filter :store_realtime_session_zmq
+			 		after_action :store_realtime_session_zmq
 			 	end
 			end
 		end
@@ -43,9 +43,9 @@ module Realtime
 			stored_session_data = JSON.generate(session_data)
 
 			ZmqWrapper.store_session(
-				realtime_user_id, 
-				@realtime_token, 
-				stored_session_data, 
+				realtime_user_id,
+				@realtime_token,
+				stored_session_data,
 				86400
 			)
 		end
@@ -58,7 +58,7 @@ module Realtime
 			}
 
 			# todo: merge additional session data passed in
-			
+
 			stored_session_data = JSON.generate(session_data)
 
 			RedisWrapper.redis.hset(
@@ -66,7 +66,7 @@ module Realtime
 				@realtime_token,
 				stored_session_data,
 			)
-			
+
 			# expire this realtime session after one day.
 			RedisWrapper.redis.expire("rtSession-" + realtime_user_id.to_s, 86400)
 		end

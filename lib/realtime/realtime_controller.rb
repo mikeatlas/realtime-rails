@@ -3,7 +3,7 @@ module Realtime
 		extend ActiveSupport::Concern
 
 		module ClassMethods
-			def realtime_controller(options = nil)
+			def realtime_controller(options = {})
                                 queue = options.delete(:queue)
 			 	before_action :do_realtime_token, options
 			 	before_action :do_realtime_user_id, options
